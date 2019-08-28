@@ -22,6 +22,37 @@ window.ToDoList = {
         })
     },
 
+    getItems: function () {
+        $.ajax({
+            url: ToDoList.API_BASE_URL,
+            method: "GET",
+        }).done(function (response) {
+            console.log("Successfully recived response");
+            console.log(response);
+
+            ToDoList.displayItems(JSON.parse(response));
+        })
+    },
+
+    displayItems: function (items) {
+        var tableBodyHtml = "";
+
+        items.forEach(item => tableBodyHtml += ToDoList.getItemRow(item));
+
+        $("#to-do-items-table tbody").html(tableBodyHtml);
+    },
+
+    getItemRow: function (item) {
+        var formattedDate = new Date(...item.deadline).toLocaleDateString("ro-RO");
+
+        return `<tr>
+            <td>${item.description}</td>
+            <td>${formattedDate}</td>
+            <td><input type="checkbox" class="mark-done=checkbox" title="Completed"/></td>
+            <td><a href="#" class="delete-item fa fa-trash"></a></td>
+        </tr>`
+    },
+
     bindEvents: function () {
 
         $("#new-item-form").submit(function (event) {
@@ -33,5 +64,7 @@ window.ToDoList = {
 
 };
 
+ToDoList.getItems();
 ToDoList.bindEvents();
+
 
